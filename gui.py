@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import showinfo
 import sqlite3
-import pandas as pd
+
 
 class LoginSystem:
     def __init__(self, db_path):
