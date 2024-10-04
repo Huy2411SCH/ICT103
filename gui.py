@@ -100,6 +100,6 @@ class LoginWin:
 if __name__ == "__main__":
     root = tk.Tk()
     app = LoginWin(root)
-    LoginSys = LoginSystem(r'C:\Users\skyhu\Documents\Labs\test.db')
+    LoginSys = LoginSystem(r'C:\Users\test.db')
     root.mainloop()
 
