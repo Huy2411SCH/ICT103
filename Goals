@@ -1,0 +1,4 @@
+- A book database and management UI
+- Better UIs 
+- Role-Based Access Control
+- UI all fit inside the window irregard of window's size (e.g currently the refresh button is out of the window when at min size)
