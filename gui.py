@@ -38,18 +38,28 @@ class BookSystem:
     def __init__(self, db_path):
         self.db_path = db_path
         self.conn2 = sqlite3.connect(self.db_path)
-        self.cursor = self.conn.cursor()
+        self.cursor = self.conn2.cursor()
         self.create_user_table()
     def create_user_table(self):
         self.cursor.execute('''
         CREATE TABLE IF NOT EXISTS books (
-            id INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
             author TEXT NOT NULL,
             year INTEGER NOT NULL)
-        )
+        
         ''')
         self.conn2.commit()
+    def add_book(self,title,author,year):
+            cursor = self.conn2.cursor()
+            cursor.execute('INSERT INTO books (title, author, year) VALUES (?, ?, ?)', (title, author, year))
+            self.conn2.commit()
+    def search_books(self):
+        return
+    def delete_book(self):
+        return
+    def refresh_book_list(self):
+        return
 
 class MainWin:
     def __init__(self, root):
@@ -131,6 +141,9 @@ class MainWin:
         self.notebook.add(self.view_frame, text="View Books")
         self.notebook.add(self.search_frame, text="Search Books")
         self.setup_add_book_frame()
+        self.setup_view_books_frame()
+        self.setup_search_books_frame()
+
     def setup_add_book_frame(self):
         # Title
         ttk.Label(self.add_frame, text="Title:").grid(row=0, column=0, padx=5, pady=5)
@@ -148,10 +161,64 @@ class MainWin:
         self.year_entry.grid(row=2, column=1, padx=5, pady=5)
 
         # Add Book Button
-        self.add_button = ttk.Button(self.add_frame, text="Add Book", command=self.add_book)
+        self.add_button = ttk.Button(self.add_frame, text="Add Book", command=self.ui_add_book)
         self.add_button.grid(row=3, column=0, columnspan=2, pady=10)
+    def setup_view_books_frame(self):
+        # Create Treeview
+        self.tree = ttk.Treeview(self.view_frame, columns=('ID', 'Title', 'Author', 'Year'), show='headings')
+        self.tree.heading('ID', text='ID')
+        self.tree.heading('Title', text='Title')
+        self.tree.heading('Author', text='Author')
+        self.tree.heading('Year', text='Year')
+        self.tree.pack(fill=tk.BOTH, expand=True)
+
+        # Delete Book Button
+        self.delete_button = ttk.Button(self.view_frame, text="Delete Selected", command=self.delete_book)
+        self.delete_button.pack(pady=10)
+
+        # Refresh Button
+        self.refresh_button = ttk.Button(self.view_frame, text="Refresh", command=self.refresh_book_list)
+        self.refresh_button.pack(pady=10)
+
+        # Load books
+        self.refresh_book_list()
+
+    def setup_search_books_frame(self):
+        # Search entry
+        ttk.Label(self.search_frame, text="Search:").grid(row=0, column=0, padx=5, pady=5)
+        self.search_entry = ttk.Entry(self.search_frame, width=40)
+        self.search_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        # Search button
+        self.search_button = ttk.Button(self.search_frame, text="Search", command=self.search_books)
+        self.search_button.grid(row=0, column=2, padx=5, pady=5)
+
+        # Search results
+        self.search_results = ttk.Treeview(self.search_frame, columns=('ID', 'Title', 'Author', 'Year'), show='headings')
+        self.search_results.heading('ID', text='ID')
+        self.search_results.heading('Title', text='Title')
+        self.search_results.heading('Author', text='Author')
+        self.search_results.heading('Year', text='Year')
+        self.search_results.grid(row=1, column=0, columnspan=3, padx=5, pady=5, sticky='nsew')
+
+        # Configure grid weights
+        self.search_frame.grid_rowconfigure(1, weight=1)
+        self.search_frame.grid_columnconfigure(1, weight=1)
+    def ui_add_book(self):
+        print("added")
+        BookSys.add_book(self.title_entry.get(),self.author_entry.get(),self.year_entry.get())
+
+    def search_books(self):
+        return
+    def delete_book(self):
+        return
+    def refresh_book_list(self):
+        return
+    
 if __name__ == "__main__":
     root = tk.Tk()
     app = MainWin(root)
     LoginSys = LoginSystem(r'C:\Users\skyhu\Documents\Labs\test.db')
+    BookSys = BookSystem(r'C:\Users\skyhu\Documents\Labs\books.db')
     root.mainloop()
+   
