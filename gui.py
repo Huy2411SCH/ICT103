@@ -2,13 +2,13 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import showinfo
 import sqlite3
-
+import pandas as pd
 
 class LoginSystem:
     def __init__(self, db_path):
         self.db_path = db_path
-        self.conn = sqlite3.connect(self.db_path)
-        self.cursor = self.conn.cursor()
+        self.conn1 = sqlite3.connect(self.db_path)
+        self.cursor = self.conn1.cursor()
         self.create_user_table()
     def create_user_table(self):
         self.cursor.execute('''
@@ -17,13 +17,13 @@ class LoginSystem:
                 password TEXT NOT NULL
         )
         ''')
-        self.conn.commit()
+        self.conn1.commit()
    
 
     def add_user(self, username, password):
         try:
             self.cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
-            self.conn.commit()
+            self.conn1.commit()
             return "User added successfully!"
         except sqlite3.IntegrityError:
             return "Username already exists!"
@@ -34,9 +34,24 @@ class LoginSystem:
 
             return self.result
 
+class BookSystem:
+    def __init__(self, db_path):
+        self.db_path = db_path
+        self.conn2 = sqlite3.connect(self.db_path)
+        self.cursor = self.conn.cursor()
+        self.create_user_table()
+    def create_user_table(self):
+        self.cursor.execute('''
+        CREATE TABLE IF NOT EXISTS books (
+            id INTEGER PRIMARY KEY,
+            title TEXT NOT NULL,
+            author TEXT NOT NULL,
+            year INTEGER NOT NULL)
+        )
+        ''')
+        self.conn2.commit()
 
-
-class LoginWin:
+class MainWin:
     def __init__(self, root):
         self.root = root
         self.root.title("Login UI")
@@ -53,10 +68,12 @@ class LoginWin:
         self.root.geometry(f'{self.window_width}x{self.window_height}+{self.center_x}+{self.center_y}')
         self.email = tk.StringVar()
         self.password = tk.StringVar()
-        
-        # Sign in frame
+        self.create_login_frame()
+    def create_login_frame(self):
+                # Sign in frame
         self.signin = ttk.Frame(self.root)
         self.signin.pack(padx=10, pady=10, fill='x', expand=True)
+        
         # email
         self.email_label = ttk.Label(self.signin, text="Email Address:")
         self.email_label.pack(fill='x',padx=100, pady=0, expand=True)
@@ -81,7 +98,8 @@ class LoginWin:
         self.register_button.pack(fill='x',padx=100, pady=10, expand=True, )
     def login_clicked(self):
         if LoginSys.login(self.email.get(),self.password.get()):
-
+            self.hide_signin_frame()
+            self.create_books_system()
             msg = 'You have logged in'
             showinfo(
                 title='Information',
@@ -95,11 +113,45 @@ class LoginWin:
             msg = LoginSys.add_user(self.email.get(),self.password.get())
             showinfo(
                 title='Information',
-                message=msg)
- 
+                message=msg)    
+    def hide_signin_frame(self):
+         self.signin.pack_forget()
+    def create_books_system(self):
+                 # Create and set up the notebook
+        self.notebook = ttk.Notebook(self.root)
+        self.notebook.pack(fill=tk.BOTH, expand=True)
+
+        # Create frames
+        self.add_frame = ttk.Frame(self.notebook)
+        self.view_frame = ttk.Frame(self.notebook)
+        self.search_frame = ttk.Frame(self.notebook)
+
+        # Add frames to notebook
+        self.notebook.add(self.add_frame, text="Add Book")
+        self.notebook.add(self.view_frame, text="View Books")
+        self.notebook.add(self.search_frame, text="Search Books")
+        self.setup_add_book_frame()
+    def setup_add_book_frame(self):
+        # Title
+        ttk.Label(self.add_frame, text="Title:").grid(row=0, column=0, padx=5, pady=5)
+        self.title_entry = ttk.Entry(self.add_frame, width=40)
+        self.title_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        # Author
+        ttk.Label(self.add_frame, text="Author:").grid(row=1, column=0, padx=5, pady=5)
+        self.author_entry = ttk.Entry(self.add_frame, width=40)
+        self.author_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        # Year
+        ttk.Label(self.add_frame, text="Year:").grid(row=2, column=0, padx=5, pady=5)
+        self.year_entry = ttk.Entry(self.add_frame, width=40)
+        self.year_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        # Add Book Button
+        self.add_button = ttk.Button(self.add_frame, text="Add Book", command=self.add_book)
+        self.add_button.grid(row=3, column=0, columnspan=2, pady=10)
 if __name__ == "__main__":
     root = tk.Tk()
-    app = LoginWin(root)
-    LoginSys = LoginSystem(r'C:\Users\test.db')
+    app = MainWin(root)
+    LoginSys = LoginSystem(r'C:\Users\skyhu\Documents\Labs\test.db')
     root.mainloop()
-
