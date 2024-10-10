@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import showinfo
-import sqlite3
-import pandas as pd
+import sqlite3   # use pip install --upgrade sqlite3
+import pandas as pd # use pip install pandas
 
 class LoginSystem:
     def __init__(self, db_path):
@@ -219,6 +219,6 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = MainWin(root)
     LoginSys = LoginSystem(r'C:\Users\skyhu\Documents\Labs\test.db')
-    BookSys = BookSystem(r'C:\Users\skyhu\Documents\Labs\books.db')
+    BookSys = BookSystem(r'C:\Users\skyhu\Documents\Labs\books.db') #change the path to your own path
     root.mainloop()
    
