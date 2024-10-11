@@ -81,8 +81,8 @@ class MainWin:
         self.root.iconbitmap('./book.ico')
 
         #set size
-        self.window_width = 500
-        self.window_height = 300
+        self.window_width = 800
+        self.window_height = 500
 
         # the ability to resize
         self.root.resizable = (True, True)
@@ -108,7 +108,7 @@ class MainWin:
         # Sign in frame
         self.signin = ttk.Frame(self.root)
         self.signin.pack(padx=10, pady=10, fill='x', expand=True)
-        
+
         # email
         self.email_label = ttk.Label(self.signin, text="Email Address:")
         self.email_label.pack(fill='x',padx=100, pady=0, expand=True)
